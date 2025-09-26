@@ -1,61 +1,33 @@
-import sys
-sys.path.append("/path/to/this/directory") # Fill in this path
-from q3 import next_letter_frequency
-from q2 import count_char_n_grams
-
-"""
-Please implement generate_next_char() according to the comments describing its functionality.
-You will need to write the documentation.
-There are extra challenges below it, if you are interested in creating a small language model.
-
-To run this file (and import the functions from q2 and q3), fill in the 
-path to this current directory above.
-"""
-
+import random
 
 def generate_next_char(prompt: str, counts: dict[str, int]) -> str:
-    # This function should call next_letter_frequency() to get the options for 
-    # the next character given the prompt (which you can assume has length n-1),
-    # and then randomly choose one of the characters and return it.
-    # You can also assume that counts has the format output by count_char_n_grams().
+    """Generates the next character given a prompt and n-gram counts.
+    
+    This function uses the character n-gram counts to probabilistically
+    choose the next character following a given (n-1)-character prompt.
+    
+    Parameters
+    ----------
+    prompt : str
+        A string of length n-1 representing the preceding characters.
+    counts : dict[str, int]
+        A dictionary mapping n-grams (length n strings) to their counts,
+        as produced by count_char_n_grams().
+    
+    Returns
+    -------
+    str
+        The next character, chosen randomly based on the frequency of 
+        observed n-grams. If no n-grams start with the prompt, a random
+        lowercase letter ('a'–'z') is returned.
+    """
+    options = next_letter_frequency(prompt, counts)
 
-    # First call next_letter_frequency().
-    # If the dictionary returned is empty (because the character ngram prompt was
-    # not there in the original text), this function should randomly choose a
-    # letter between a and z and return it.
-    # If the dictionary returned is not empty, then this function should randomly
-    # choose one of the characters which is listed as an option in the map and 
-    # return it.
-    pass
-
-# You may test out this function by calling it in a for loop and printing the letters one by one:
-
-text = 'catcatcat'
-n_gram_counts = count_char_n_grams(text, 4)
-prompt = 'cat'
-print(prompt)
-
-for i in range(1, 20):
-    next_letter = generate_next_char(prompt, n_gram_counts)
-    print(next_letter)
-    prompt = prompt[1:] + next_letter
-
-# If you are looking for an added challenge, use the counts returned by 
-# next_letter_frequency() to indicate how likely each next letter should be. 
-# For example, if next_letter_frequency() returns the map {c: 2, d: 1} then 
-# generate_next_char() should be twice as likely to generate c as d. You can 
-# do this by generating a random number between 0 and 3. If the number is 0 
-# or 1, then return c, and if the number is 2, then return d. This is an 
-# added challenge, and it is expected that if you attempt it, this lab will 
-# take longer than the amount of time available in class.
-
-# And for even more of a challenge (it is likely that you are working outside of 
-# lab time): Questions 2, 3, and 4 together comprise a small language model. 
-# Time to have it read some song lyrics, and have it generate songs!
-# Here is a dataset of Olivia Rodrigo song lyrics: 
-# https://www.kaggle.com/datasets/mehaksingal/olivia-rodrigo-lyrics-datasetl
-# You may also use any dataset of song lyrics that you would like. A longer file 
-# containing a large number of song lyrics will be better (since it will contain 
-# more options for character ngrams).
-# Once you have a string containing a large amount of song lyrics text, use the 
-# for loop (from testing out q4) to generate a bunch of characters!
+    if not options:
+        # 没有匹配 n-gram，就随机返回 a–z 的字母
+        return chr(random.randint(ord('a'), ord('z')))
+    
+    # 按照频率加权随机选择
+    letters = list(options.keys())
+    weights = list(options.values())
+    return random.choices(letters, weights=weights, k=1)[0]
