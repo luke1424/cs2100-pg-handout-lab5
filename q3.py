@@ -1,10 +1,17 @@
+"""Character n-gram helpers (q3).
+
+This module provides utilities to compute the frequency of possible next
+characters given an (n-1)-length prompt and a mapping of n-gram counts.
+"""
+
+
 def next_letter_frequency(prompt: str, counts: dict[str, int]) -> dict[str, int]:
-    """Computes the frequency of possible next characters given a prompt.
-    
+    """Compute the frequency of possible next characters given a prompt.
+
     Given a string `prompt` of length n-1 and a dictionary of n-gram counts,
     this function returns a dictionary mapping each possible next character
     to the number of times it follows the given prompt in the text.
-    
+
     Parameters
     ----------
     prompt : str
@@ -12,7 +19,7 @@ def next_letter_frequency(prompt: str, counts: dict[str, int]) -> dict[str, int]
     counts : dict[str, int]
         A dictionary mapping character n-grams (length n) to their counts,
         as produced by count_char_n_grams().
-    
+
     Returns
     -------
     dict[str, int]
@@ -22,8 +29,7 @@ def next_letter_frequency(prompt: str, counts: dict[str, int]) -> dict[str, int]
     """
     result: dict[str, int] = {}
     for ngram, freq in counts.items():
-        if ngram.startswith(prompt):  
-            next_char = ngram[-1]     
+        if ngram.startswith(prompt):
+            next_char = ngram[-1]
             result[next_char] = result.get(next_char, 0) + freq
     return result
-
